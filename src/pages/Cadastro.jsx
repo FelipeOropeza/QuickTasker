@@ -11,29 +11,28 @@ function Cadastro() {
 
   const handleCadastro = async (userData) => {
     try {
-      const response = await axios.post(
-        `${apiUrl}/users`,
-        userData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.post(`${apiUrl}/users`, userData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      if (response.status === 201) {
-        setMessage("Cadastro realizado com sucesso");
-        setTimeout(() => {
-          setMessage("");
-          navigate("/");
-        }, 2000);
-      }
+      setMessage("Cadastro realizado com sucesso");
+      setTimeout(() => {
+        setMessage("");
+        navigate("/");
+      }, 2000);
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         setMessage(error.response.data.message);
       } else {
         setMessage("Erro ao realizar o cadastro");
       }
+
       setTimeout(() => setMessage(""), 3000);
     }
   };
