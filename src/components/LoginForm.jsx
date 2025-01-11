@@ -1,12 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-function LoginForm() {
+function LoginForm({onLogin, message}) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const userData = { email, password };
+    onLogin(userData);
+    setIsSubmitting(false);
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-3 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center">Login</h1>
-        <form className="space-y-6">
+        {message && (
+        <p
+          className={`text-center ${
+            message.includes("sucesso") ? "text-green-500" : "text-red-500"
+          }`}
+        >
+          {message}
+        </p>
+      )}
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="form-control">
             <label className="label">
               <span className="label-text">Email</span>
@@ -14,6 +34,8 @@ function LoginForm() {
             <input
               type="email"
               placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="input input-bordered w-full"
             />
           </div>
@@ -24,10 +46,12 @@ function LoginForm() {
             <input
               type="password"
               placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="input input-bordered w-full"
             />
           </div>
-          <button type="submit" className="btn btn-primary w-full">
+          <button type="submit" className="btn btn-primary w-full" disabled={isSubmitting}>
             Login
           </button>
         </form>
@@ -38,7 +62,6 @@ function LoginForm() {
           </Link>
         </p>
       </div>
-    </div>
   );
 }
 
