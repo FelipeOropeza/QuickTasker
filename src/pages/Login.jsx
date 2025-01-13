@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import LoginForm from "../components/LoginForm";
 import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 function Login() {
+  const { login } = useContext(AuthContext);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -19,6 +21,7 @@ function Login() {
 
       setMessage("Login realizado com sucesso");
       setTimeout(() => {
+        login(response.data);
         setMessage("");
         navigate("/home");
       }, 2000);
