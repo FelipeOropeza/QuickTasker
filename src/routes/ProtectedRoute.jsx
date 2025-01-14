@@ -3,9 +3,14 @@ import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
 
   if (!user) {
+    console.log("Não está logado");
     return <Navigate to="/" replace />;
   }
 

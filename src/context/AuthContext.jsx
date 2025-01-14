@@ -12,15 +12,15 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedUserId = localStorage.getItem("userId");
-    const token = Cookies.get("token");
+    const storedToken = Cookies.get("token");
 
-    if (storedUser && storedUserId && token) {
+    if (storedUser && storedUserId && storedToken) {
       try {
         setUser(JSON.parse(storedUser));
         setUserId(JSON.parse(storedUserId));
-        setToken(token);
+        setToken(storedToken);
       } catch (error) {
-        console.error("Erro ao carregar dados do localStorage", error);
+        console.error("Erro ao carregar dados do localStorage:", error);
         logout();
       }
     } else {
@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = (userData) => {
     const { name, id, token } = userData;
+    
     setUser(name);
     setUserId(id);
     setToken(token);
@@ -50,8 +51,12 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
   };
 
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, userId, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, userId, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
