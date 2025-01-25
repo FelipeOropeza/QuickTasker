@@ -10,7 +10,6 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!user) {
-    console.log("Não está logado");
     return <Navigate to="/" replace />;
   }
 
