@@ -1,60 +1,60 @@
-import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
-import { AuthContext } from '../context/AuthContext';
+import React, { useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
+const fetchTasks = async ({ queryKey }) => {
+  const [, userId, token] = queryKey;
+
+  const response = await axios.get(`${apiUrl}/tasks/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
 const TaskList = () => {
   const { token, userId } = useContext(AuthContext);
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/tasks/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setTasks(response.data);
-      } catch (err) {
-        setError('Erro ao carregar as tarefas');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["tasks", userId, token],
+    queryFn: fetchTasks,
+    enabled: !!userId && !!token,
+  });
 
-    fetchTasks();
-  }, [token, userId]);
-
-  if (loading) {
-    return <div>Carregando tarefas...</div>;
+  if (isLoading) {
+    return <div></div>;
   }
 
-  if (error) {
-    return <div>{error}</div>;
+  if (isError) {
+    return <div>{error.message || "Erro ao carregar as tarefas"}</div>;
   }
 
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-bold">Tarefas:</h2>
-      <ul>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tasks.length > 0 ? (
           tasks.map((task) => (
-            <li key={task.id} className="mb-2">
-              <p className="font-bold">{task.title}</p>
-              <p>{task.description}</p>
-              <p>Status: {task.status}</p>
-              <p>Prioridade: {task.priority}</p>
-              <p>Data de Vencimento: {task.due_date}</p>
-            </li>
+            <div key={task.id} className="bg-white p-4 rounded-lg shadow-md">
+              <h3 className="font-bold text-lg">{task.title}</h3>
+              <p className="text-sm text-gray-600">{task.description}</p>
+              <p className="mt-2 text-sm">Status: {task.status}</p>
+              <p className="text-sm">Prioridade: {task.priority}</p>
+              <p className="text-sm">Data de Vencimento: {task.due_date}</p>
+            </div>
           ))
         ) : (
           <p>Não há tarefas para exibir.</p>
         )}
-      </ul>
+      </div>
     </div>
   );
 };
