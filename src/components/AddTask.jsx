@@ -1,28 +1,49 @@
-import { useState } from "react";
+import React, { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 
-const AddTask = ({ onAddTask, setIsModalOpen }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("media");
-  const [dueDate, setDueDate] = useState("");
+const apiUrl = import.meta.env.VITE_API_URL;
+
+const AddTask = ({ setIsModalOpen, token, userId }) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [priority, setPriority] = useState('media');
+  const [dueDate, setDueDate] = useState('');
+
+  const queryClient = useQueryClient();
+
+  const addTaskMutation = useMutation({
+    mutationFn: async (newTask) => {
+      const response = await axios.post(`${apiUrl}/tasks`, newTask, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['tasks', userId, token]);
+    },
+  });
 
   const handleSubmit = () => {
     if (title.trim()) {
       const newTask = {
         title,
         description,
-        status: "pendente",
+        status: 'pendente',
         priority,
-        due_date: dueDate,
+        ...(dueDate && { due_date: dueDate }),
+        user_id: userId,
       };
 
-      onAddTask(newTask);
+      addTaskMutation.mutate(newTask);
       setIsModalOpen(false);
 
-      setTitle("");
-      setDescription("");
-      setPriority("media");
-      setDueDate("");
+      setTitle('');
+      setDescription('');
+      setPriority('media');
+      setDueDate('');
     }
   };
 
@@ -59,7 +80,6 @@ const AddTask = ({ onAddTask, setIsModalOpen }) => {
           </select>
         </div>
 
-        {/* Data de vencimento */}
         <div className="mb-4">
           <label className="block text-gray-700 font-semibold mb-2">Data de Vencimento</label>
           <input
@@ -82,9 +102,9 @@ const AddTask = ({ onAddTask, setIsModalOpen }) => {
           <button
             className="bg-blue-500 text-white py-2 px-4 rounded-md"
             onClick={handleSubmit}
-            disabled={!title.trim()}
+            disabled={addTaskMutation.isLoading || !title.trim()}
           >
-            Adicionar
+            {addTaskMutation.isLoading ? 'Adicionando...' : 'Adicionar'}
           </button>
         </div>
       </div>
