@@ -12,7 +12,7 @@ function SideBar() {
   };
 
   return (
-    <div className="w-60 bg-gray-800 text-white p-4">
+    <div className="bg-gray-800 text-white p-4 w-60 sm:w-48 xs:w-40">
       <ul className="space-y-4">
         <li>
           <a href="#" className="hover:bg-gray-600 p-2 rounded-md block">

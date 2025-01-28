@@ -13,9 +13,8 @@ const Home = () => {
       <SideBar />
 
       <div className="flex-1 p-6 overflow-auto">
-
         <button
-          className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl fixed bottom-6 right-6"
+          className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl fixed bottom-6 right-6 z-50"
           onClick={() => setIsModalOpen(true)}
         >
           +

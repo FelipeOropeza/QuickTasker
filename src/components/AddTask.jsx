@@ -48,7 +48,7 @@ const AddTask = ({ setIsModalOpen, token, userId }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-md shadow-lg w-96">
         <h2 className="text-xl font-bold mb-4">Adicionar Tarefa</h2>
 
